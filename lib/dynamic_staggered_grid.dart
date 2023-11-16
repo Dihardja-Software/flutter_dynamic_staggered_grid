@@ -16,14 +16,7 @@ class DynamicStaggeredGridView extends StatelessWidget {
   final EdgeInsets? padding;
   final double? itemHeight;
 
-  late final int columnCount;
-  late final int rowCount;
-  late final int remainder;
-  late final int tileCount;
-
-  late final bool altered;
-
-  DynamicStaggeredGridView({
+  const DynamicStaggeredGridView({
     super.key,
     this.padding,
     required this.crossAxisCount,
@@ -33,19 +26,22 @@ class DynamicStaggeredGridView extends StatelessWidget {
     required this.itemBuilder,
     required this.itemCount,
     this.itemHeight,
-  }) {
-    columnCount = min(itemCount, crossAxisCount);
-    rowCount = min(
-      mainAxisCount ?? maxInteger,
-      (itemCount ~/ crossAxisCount) +
-          ((itemCount.remainder(crossAxisCount) == 0) ? 0 : 1),
-    );
-    int maxCount =
-        mainAxisCount == null ? maxInteger : crossAxisCount * mainAxisCount!;
-    remainder = itemCount > maxCount ? 0 : itemCount.remainder(crossAxisCount);
-    tileCount = min(maxCount, itemCount);
-    altered = rowCount > 1 && remainder != 0;
-  }
+  });
+
+  int get columnCount => min(itemCount, crossAxisCount);
+  int get rowCount => min(
+        mainAxisCount ?? maxInteger,
+        (itemCount ~/ crossAxisCount) +
+            ((itemCount.remainder(crossAxisCount) == 0) ? 0 : 1),
+      );
+
+  int get maxTileCount =>
+      mainAxisCount == null ? maxInteger : crossAxisCount * mainAxisCount!;
+  int get remainder =>
+      itemCount > maxTileCount ? 0 : itemCount.remainder(crossAxisCount);
+  int get tileCount => min(maxTileCount, itemCount);
+
+  bool get altered => rowCount > 1 && remainder != 0;
 
   Widget column(BuildContext context, int columnIndex) {
     bool isFirstColumn = columnIndex == 0;
